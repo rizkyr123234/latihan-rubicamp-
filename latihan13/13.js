@@ -56,9 +56,10 @@ else if (process.argv[2] === 'cekGkKomplit') {
         }
     }
 }
+// ngetag
 else if (process.argv[2] === 'ngeTag') {
     let slice = process.argv.slice(4)
-    parse[process.argv[3] - f1].tag = slice.toString()
+    parse[process.argv[3]-1 ].tag = slice.toString()
 
     fs.writeFileSync('pekerjaan.json', JSON.stringify(parse))
     console.log(parse)
