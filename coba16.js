@@ -28,14 +28,7 @@ class Car {
     introduce() {
         console.log(`ini mobil dengan brand ${this.nama}`)
     }
-    garansi() {
-         let tahunGaransi = Math.floor(Math.random() * 10)
-       let  tahunPemkaian =Math.floor(Math.random() * 10) 
-        if (tahunGaransi <= tahunPemkaian){
-           return true
-        } else{return false}
-        
-    }
+    
 }
 class CarWitType extends Car {
     constructor(nama,  type, pintu, kursi, brand, jenisKaret) {
@@ -55,6 +48,14 @@ class CarWitType extends Car {
     kecepatan() {
         console.log(`mobil bertype ${this.type}, memiliki kecepatan 300km/h`)
     }
+    garansi() {
+        let tahunGaransi = Math.floor(Math.random() * 10)
+      let  tahunPemkaian =Math.floor(Math.random() * 10) 
+       if (tahunGaransi <= tahunPemkaian){
+          return true
+       } else{return false}
+       
+   }
 }
 class Ban {
     constructor(nama, jenisKaret) {
