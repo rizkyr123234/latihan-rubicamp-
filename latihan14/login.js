@@ -1,8 +1,9 @@
+const { fstat } = require('fs');
 const readline = require('readline');
 const sqlite = require('sqlite3').verbose()
 let db = new sqlite.Database('./universitas.db', sqlite.OPEN_READWRITE, (err) => {
     if (err) return console.error(err.message)
-    console.log('sukses mas ')
+    
 }
 
 )
@@ -18,26 +19,213 @@ class LOgIn {
 
     }
     login() {
-        var mahasiswa = new Mahasiswa
-        rl.question('user ID mu', (answer) => {
-            if (answer == this.userId) {
-                rl.question('passwordnya', (answer) => {
-                    if (answer == this.pas) {
+        var mahasiswa = new Mahasiswa()
+        var matkul = new Matkul()
+        var dosen = new Dosen()
+        var jurusan = new Jurusan()
+        var kontrak = new Kontrak()
+        rl.question('masukkan user', (answer)=>{
+            if(answer == this.userId){
+                rl.question('masukkan pass', (answer)=>{
+                    if(answer == this.pas){
                         this.nampilin()
-                        rl.question('silahkan pilih nomer yg ada di atas ', (answer) => {
-                            if (answer == 1) {
-                                mahasiswa.menu()
-                                rl.question('silahkan pilih nomer', (answer) => { if (answer == 4) { rl.question('masukan nim ',(answer)=>{
-                                mahasiswa.ngedelet(answer)
-                                }) } })
+                        rl.question('pilih data yang anda inginkan',(answer)=>{
+                            switch(answer){
+                                case '1':
+                                    mahasiswa.menu()
+                                    rl.question('masukkan angka untuk memilih menu',(answer)=>{
+                                        switch(answer){
+                                            case '1' :
+                                                mahasiswa.daftar()
+                                                
+                                                break;
+                                            case '2' : 
+                                                rl.question('masukkan NIM nya mas',(answer)=>{
+                                                    mahasiswa.cari(answer)
+                                                } )
+                                                break;
+                                            case '3' :
+                                                rl.question('masukkan NIM ', (NIM)=>{
+                                                    rl.question('masukkan nama', (nama)=>{
+                                                        rl.question('masukkan Id jurusan', (ID)=>{
+                                                            mahasiswa.tambah(NIM,nama,ID)
+                                                        })
+                                                    })
+                                                })
+                                                break;
+                                            case '4':
+                                                rl.question('masukan nim', (answer)=>{
+                                                    mahasiswa.ngedelet(answer)
+
+                                                })
+                                                break
+                                            case '5':
+                                                mahasiswa.kembali()
+                                                break;
+                                            default : 
+                                            console.log('hasil not found')
+                                                
+                                                
+
+                                        }
+                                    })
+                                
+                                    break 
+                                case '2': 
+                                    jurusan.menu()
+                                    rl.question('masukkan angka yang ingin diakses',(answer)=>{
+                                        switch(answer){
+                                            case '1':
+                                                jurusan.daftar()
+                                                break; 
+                                                
+                                            case '2' : 
+                                            rl.question('masukkan ID_jurusannya nya mas',(answer)=>{
+                                                jurusan.cari(answer)
+                                            } )
+                                                break;
+                                            case '3': 
+                                            rl.question('masukkan ID_jurusan ', (id)=>{
+                                                rl.question('masukkan nama jurusan', (nama)=>{
+                                                    jurusan.tambah(id,nama)
+                                                })
+                                            })
+                                                break
+                                            case '4' : 
+                                            rl.question('masukan id_jurusan', (answer)=>{
+                                                jurusan.ngedelet(answer)
+
+                                            })
+                                                break
+                                            case '5':
+                                                jurusan.kembali()
+                                                break
+                                            default :
+                                            console.log('data not faund')
+                                            
+                                        }
+                                    })
+                                    break
+                                case '3':
+                                    dosen.menu()
+                                    rl.question('masukkan angka untuk mengakses menu', (answer)=>{
+                                        switch(answer){
+                                            case '1':
+                                                dosen.daftar()
+                                                break;
+                                            case '2': 
+                                            rl.question('masukkan ID dosen', (answer)=>{
+                                                dosen.cari(answer)
+                                            })
+                                                break;
+                                            case '3':
+                                                rl.question('masukkan ID dosen ', (ID)=>{
+                                                    rl.question('masukkan nama', (nama)=>{
+                                                        dosen.tambah(ID,nama)
+                                                    })
+                                                })
+                                                break;
+                                            case '4' :
+                                                rl.question('masukan ID dosen', (answer)=>{
+                                                    dosen.ngedelet(answer)
+    
+                                                })
+                                                break
+                                            case '5' :
+                                                dosen.kembali()
+                                                break
+                                            default : 
+                                                console.log('angka yang di masukkan salah')
+                                                break
+
+
+                                        }
+                                    })
+                                    break
+                                case '4':
+                                    matkul.menu()
+                                    rl.question('masukkan angka untuk mengakses',(answer)=>{
+                                        switch(answer){
+                                            case '1' : 
+                                                matkul.daftar()
+                                                break
+                                            case '2' : 
+                                            rl.question('masukkan ID matkul', (answer)=>{
+                                                matkul.cari(answer)
+                                            })
+                                                break
+                                            case '3' : 
+                                            rl.question('masukkan ID matkul ', (ID)=>{
+                                                rl.question('masukkan nama', (nama)=>{
+                                                    rl.question('masukkan jumlah sks',(jumlah)=>{
+                                                        matkul.tambah(ID,nama,jumlah)
+                                                    })
+                                                })
+                                            })
+                                                break;
+                                            case '4': 
+                                            rl.question('masukan ID matkul', (answer)=>{
+                                                matkul.ngedelet(answer)
+
+                                            })
+                                                break;
+                                            case '5' : 
+                                            matkul.kembali()
+                                                break
+                                            default : 
+                                            console.log('eror mas ')
+                                        }
+                                    })
+                                    break
+                                case '5': 
+                                    kontrak.menu()
+                                    rl.question('masukkan angka untuk mengakses data', (answer)=>{
+                                        switch(answer){
+                                            case '1':
+                                                kontrak.daftar()
+                                                break;
+                                            case '2':
+                                                rl.question('masukkan ID mahasiswa', (answer)=>{
+                                                    kontrak.cari(answer)
+                                                })
+                                                    break;
+                                            case '3': 
+                                            rl.question('masukkan ID matkul ', (IDMT)=>{
+                                                rl.question('masukkan ID dosen', (IDD)=>{
+                                                    rl.question('masukkan nim', (NIM)=>{
+                                                        rl.question('masukkan nilai mahasiswa',(nilai)=>{
+                                                            kontrak.tambah(IDMT,IDD, NIM, nilai)
+                                                        })
+                                                    })
+                                                })
+                                            })
+                                                break;
+                                            case '4':
+                                                rl.question('masukkan NIM mahasiswa',(answer)=>{
+                                                    kontrak.ngedelet(answer)
+                                                })
+                                                break
+                                            case '5' : 
+                                            kontrak.kembali()
+                                                break
+                                            default :
+                                            console.log('data not found')
+
+                                                
+                                        }
+                                    })
+                                    break
+                                case '6': 
+                                    rl.close()
+                                    break
+                                default : 
+                                    console.log('data not found')
                             }
-                        }
-                        )
-                    } else { console.log('eror') }
+                        })
+                    }else(console.log('anda orang asing'))
                 })
-            } else { console.log('salah idnya') }
-        }
-        )
+            } else{console.log('anda orang asing ')}
+        })
     }
     nampilin() {
         console.log(`
@@ -168,7 +356,7 @@ class Matkul {
         
     }
     tambah(ID, nama, jumlah) {
-        db.run(`INSERT into matkul(ID_matkul,nama_matkul, jumlah_sks) values("${ID}", "${nama}", "${jumlah}")`, function (err, row) {
+        db.run(`INSERT into matkul(ID_matkul,nama_matkul, jumlah_sks) values("${ID}", "${nama}", ${jumlah})`, function (err, row) {
             if (err) {
                 console.log('eror mas ')
             }
@@ -234,7 +422,7 @@ class Jurusan {
     }
     kembali() { }
 }
-class kontrak {
+class Kontrak {
     menu() {
         console.log(`menu : 
         1. daftar kontrak 
@@ -282,7 +470,7 @@ class kontrak {
 }
 const bal = new LOgIn('rizky', 123)
 bal.login()
-const mahasiswa = new Mahasiswa()
+// const mahasiswa = new Mahasiswa()
 // daftar 
 // mahasiswa.daftar()
 
@@ -298,13 +486,14 @@ const mahasiswa = new Mahasiswa()
 // hapus
 // rl.question('masukan nim', (answer)=>{
 //     mahasiswa.ngedelet(answer)
+
 // })
 
 //cari 
 // rl.question('masukkan nim ', (answer)=>{
 //     mahasiswa.cari(answer)
 // })
-console.log(mahasiswa)
+// console.log(mahasiswa)
 
 
 
