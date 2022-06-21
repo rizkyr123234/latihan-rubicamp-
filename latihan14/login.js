@@ -27,7 +27,9 @@ class LOgIn {
                         rl.question('silahkan pilih nomer yg ada di atas ', (answer) => {
                             if (answer == 1) {
                                 mahasiswa.menu()
-                                rl.question('silahkan pilih nomer', (answer) => { if (answer == 1) { mahasiswa.daftar() } })
+                                rl.question('silahkan pilih nomer', (answer) => { if (answer == 4) { rl.question('masukan nim ',(answer)=>{
+                                mahasiswa.ngedelet(answer)
+                                }) } })
                             }
                         }
                         )
@@ -66,11 +68,13 @@ class Mahasiswa {
         })
         db.close()
     }
-    cari() {
-        db.all(`select NIM, nama, ID_jurusan from mahasiswa WHERE NIM ${answer}`)
+    cari(answer) {
+       db.all(`select* from mahasiswa WHERE NIM = "${answer}"`,(err, rows) => {
+        if (err) return 'gagal mas '
+        rows.forEach(row => { console.log(row) })} )
     }
-    tambah() {
-        db.run(`INSERT into mahasiswa(NIM, nama, ID_jurusan) values(${answer}, ${answer}, ${answer})`, function (err, row) {
+    tambah(NIM,nama,ID_jurusan) {
+        db.run(`INSERT into mahasiswa(NIM, nama, ID_jurusan) values("${NIM}", "${nama}", "${ID_jurusan}")`, function (err, row) {
             if (err) {
                 console.log('eror mas ')
             }
@@ -78,8 +82,8 @@ class Mahasiswa {
         })
         db.close()
     }
-    ngedelet() {
-        db.run(`DELETE from mahasiswa Where NIM = ${answer}`, function (err) {
+    ngedelet(answer) {
+        db.run(`DELETE from mahasiswa Where NIM = "${answer}"`, function (err) {
             if (err) {
                 console.log('eror mas ')
             }
@@ -107,11 +111,17 @@ class Dosen {
         })
         db.close()
     }
-    cari() {
-        db.all(`select ID_dosen, nama_dosen from dosen WHERE ID_dosen= ${answer}`)
+    cari(answer) {
+        db.all(`select * from dosen WHERE ID_dosen= "${answer}"`,
+        (err, rows) => {
+            if (err) return 'gagal mas '
+            rows.forEach(row => { console.log(row) })
+        })
+        db.close()
+        
     }
-    tambah() {
-        db.run(`INSERT into dosen(ID_dosen,nama_dosen) values(${answer}, ${answer})`, function (err, row) {
+    tambah(ID,nama) {
+        db.run(`INSERT into dosen(ID_dosen,nama_dosen) values("${ID}", "${nama}")`, function (err, row) {
             if (err) {
                 console.log('eror mas ')
             }
@@ -119,8 +129,8 @@ class Dosen {
         })
         db.close()
     }
-    ngedelet() {
-        db.run(`DELETE from dosen Where ID_dosen= ${answer}`, function (err) {
+    ngedelet(answer) {
+        db.run(`DELETE from dosen Where ID_dosen= "${answer}"`, function (err) {
             if (err) {
                 console.log('eror mas ')
             }
@@ -148,11 +158,17 @@ class Matkul {
         })
         db.close()
     }
-    cari() {
-        db.all(`select ID_matkul, nama_matkul, jumlah_sks from matkul WHERE ID_matkul= ${answer}`)
+    cari(answer) {
+        db.all(`select * from matkul WHERE ID_matkul= "${answer}"`,
+        (err, rows) => {
+            if (err) return 'gagal mas '
+            rows.forEach(row => { console.log(row) })
+        })
+        db.close()
+        
     }
-    tambah() {
-        db.run(`INSERT into matkul(ID_matkul,nama_matkul, jumlah_sks) values(${answer}, ${answer}, ${answer})`, function (err, row) {
+    tambah(ID, nama, jumlah) {
+        db.run(`INSERT into matkul(ID_matkul,nama_matkul, jumlah_sks) values("${ID}", "${nama}", "${jumlah}")`, function (err, row) {
             if (err) {
                 console.log('eror mas ')
             }
@@ -160,8 +176,8 @@ class Matkul {
         })
         db.close()
     }
-    ngedelet() {
-        db.run(`DELETE from matkul from matkul Where ID_matkul= ${answer}`, function (err) {
+    ngedelet(answer) {
+        db.run(`DELETE from matkul from matkul Where ID_matkul= "${answer}"`, function (err) {
             if (err) {
                 console.log('eror mas ')
             }
@@ -188,11 +204,17 @@ class Jurusan {
         })
         db.close()
     }
-    cari() {
-        db.all(`select ID_jurusan, nama_jurusan from juurusan WHERE ID_jurusan ${answer}`)
+    cari(answer) {
+        db.all(`select * from jurusan WHERE ID_jurusan = "${answer}"`, 
+        (err, rows) => {
+            if (err) return 'gagal mas '
+            rows.forEach(row => { console.log(row) })
+        })
+        db.close()
+        
     }
-    tambah() {
-        db.run(`INSERT into jurusan(ID_jurusan, nama_jurusan) values(${answer}, ${answer})`, function (err, row) {
+    tambah(id, nama) {
+        db.run(`INSERT into jurusan(ID_jurusan, nama_jurusan) values("${ID}", "${nama}")`, function (err, row) {
             if (err) {
                 console.log('eror mas ')
             }
@@ -200,8 +222,8 @@ class Jurusan {
         })
         db.close()
     }
-    ngedelet() {
-        db.run(`DELETE from jurusan Where ID_jurusan= ${answer}`, function (err) {
+    ngedelet(answer) {
+        db.run(`DELETE from jurusan Where ID_jurusan= "${answer}"`, function (err) {
             if (err) {
                 console.log('eror mas ')
             }
@@ -228,11 +250,17 @@ class kontrak {
         })
         db.close()
     }
-    cari() {
-        db.all(`select * from kotrak_kuliah WHERE NIM =${answer}`)
+    cari(answer) {
+        db.all(`select * from kotrak_kuliah WHERE NIM ="${answer}"`,
+        (err, rows) => {
+            if (err) return 'gagal mas '
+            rows.forEach(row => { console.log(row) })
+        })
+        db.close()
+        
     }
-    tambah() {
-        db.run(`INSERT into kontrak_kuliah(ID_matkul, ID_dosen, NIM, nilai_mahasiswa) values(${answer}, ${answer}, ${answer},${answer})`, function (err, row) {
+    tambah(IDMT,IDD,NIM,nilai) {
+        db.run(`INSERT into kontrak_kuliah(ID_matkul, ID_dosen, NIM, nilai_mahasiswa) values("${IDMT}", ${IDD}, "${NIM}","${nilai}")`, function (err, row) {
             if (err) {
                 console.log('eror mas ')
             }
@@ -240,8 +268,8 @@ class kontrak {
         })
         db.close()
     }
-    ngedelet() {
-        db.run(`DELETE from kontrak_kuliah Where NIM = ${answer}`, function (err) {
+    ngedelet(answer) {
+        db.run(`DELETE from kontrak_kuliah Where NIM = "${answer}"`, function (err) {
             if (err) {
                 console.log('eror mas ')
             }
@@ -254,24 +282,29 @@ class kontrak {
 }
 const bal = new LOgIn('rizky', 123)
 bal.login()
+const mahasiswa = new Mahasiswa()
+// daftar 
+// mahasiswa.daftar()
 
-
-
-//ngedelete di sql via js 
-// const sqlite = require('sqlite3').verbose()
-// let db = new sqlite.Database('./coba.db')
-// db.run('DELETE from mahasiswa where NIM = "M001"', function(err){
-//     if(err){
-//         console.log('eror mas ')
-//     }
-//     console.log('sudah dihapus mas ')
+// nambah
+// rl.question('masukkan NIM ', (NIM)=>{
+//     rl.question('masukkan nama', (nama)=>{
+//         rl.question('masukkan Id jurusan', (ID)=>{
+//             mahasiswa.tambah(NIM,nama,ID)
+//         })
+//     })
 // })
-// db.close()
 
-// // nge add 
-// db.run('INSERT into mahasiswa(NIM, nama, jurusan) values("M001", "rizky", 4)', function (err, row) {
-//     if (err) {
-//         console.log('eror mas ')
-//     }
-//     console.log('udah dimasukin ya')
+// hapus
+// rl.question('masukan nim', (answer)=>{
+//     mahasiswa.ngedelet(answer)
 // })
+
+//cari 
+// rl.question('masukkan nim ', (answer)=>{
+//     mahasiswa.cari(answer)
+// })
+console.log(mahasiswa)
+
+
+
