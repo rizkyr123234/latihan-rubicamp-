@@ -21,8 +21,8 @@ class LOgIn {
     }
     login() {
         
-        rl.question('masukkan user', (answer) => {
-            if (answer.trim() == this.userId) {
+        rl.question('masukkan user', (answer1) => {
+            if (answer1.trim() == this.userId) {
                 rl.question('masukkan pass', (answer) => {
                     if (answer.trim() == this.pas) {
                         this.menuUtama()
@@ -38,7 +38,7 @@ class LOgIn {
         var jurusan = new Jurusan()
         var kontrak = new Kontrak()
         console.log(`
-        selamat datang user ${this.userId}, anda memiliki beberapa data : 
+        selamat datang user , anda memiliki beberapa data : 
         1. mahasiswa
         2. jurusan 
         3. dosen 
@@ -48,7 +48,7 @@ class LOgIn {
         rl.question('pilih data yang anda inginkan', (answer) => {
             switch (answer.trim()) {
                 case '1':
-                    mahasiswa.menu()
+                    Mahasiswa.menu()
                     break
 
                 case '2':
@@ -68,6 +68,7 @@ class LOgIn {
                     break
 
                 case '6':
+                    console.log('dadah')
                     rl.close()
                     break
 
@@ -80,7 +81,7 @@ class LOgIn {
 
 }
 class Mahasiswa {
-    menu() {
+    static menu() {
         console.log(`menu : 
        1. daftar maahasiswa 
        2. cari mahasiswa 
@@ -90,14 +91,18 @@ class Mahasiswa {
         rl.question('masukkan angka untuk mengakses data mahasiswa', (answer) => {
             switch (answer.trim()) {
                 case '1':
-                    this.daftar()
-                    this.menu()
+                    Mahasiswa.daftar(function(){
+                        Mahasiswa.menu()
+                    })
+                    
                     break;
 
                 case '2':
                     rl.question('masukkan NIM nya mas', (answer) => {
-                        this.cari(answer.trim())
-                        this.menu()
+                        Mahasiswa.cari(answer.trim(), function(){
+                            Mahasiswa.menu()
+                        })
+                        
                     }) 
                     
                     break;
@@ -106,18 +111,22 @@ class Mahasiswa {
                     rl.question('masukkan NIM ', (NIM) => {
                         rl.question('masukkan nama', (nama) => {
                             rl.question('masukkan Id jurusan', (ID) => {
-                                this.tambah(NIM.trim(), nama.trim(), ID.trim())
-                                this.menu()
+                                Mahasiswa.tambah(NIM.trim(), nama.trim(), ID.trim(),function(){
+                                    Mahasiswa.menu()
+                                } )
+                                
                             })
                         })
                     }) 
-                    this.menu()
+                    
                     break;
 
                 case '4':
                     rl.question('masukan nim', (answer) => {
-                        this.ngedelet(answer.trim())
-                        this.menu()
+                        Mahasiswa.ngedelet(answer.trim(), function(){
+                            Mahasiswa.menu()
+                        })
+                        
                     }) 
                     this.menu()
                     break
@@ -133,34 +142,38 @@ class Mahasiswa {
             }
         })
     }
-    daftar() {
+    static daftar(callback) {
         db.all(`select * from mahasiswa`, (err, rows) => {
             if (err) return 'gagal mas '
             rows.forEach(row => { console.log(row) })
+            callback()
         })
         
     }
-    cari(answer) {
+    static cari(answer,callback) {
         db.all(`select* from mahasiswa WHERE NIM = "${answer}"`, (err, rows) => {
             if (err) return 'gagal mas '
             rows.forEach(row => { console.log(row) })
+            callback()
         })
     }
-    tambah(NIM, nama, ID_jurusan) {
+    static tambah(NIM, nama, ID_jurusan,callback) {
         db.run(`INSERT into mahasiswa(NIM, nama, ID_jurusan) values("${NIM}", "${nama}", "${ID_jurusan}")`, function (err, row) {
             if (err) {
                 console.log('eror mas ')
             }
             console.log('udah dimasukin ya')
+            callback()
         })
         
     }
-    ngedelet(answer) {
+    static ngedelet(answer,callback) {
         db.run(`DELETE from mahasiswa Where NIM = "${answer}"`, function (err) {
             if (err) {
                 console.log('eror mas ')
             }
             console.log(`sudah di delet mas dengan NIM=${answer}`)
+            callback()
         })
         
 
@@ -169,7 +182,7 @@ class Mahasiswa {
 }
 
 class Dosen {
-    menu() {
+   static menu() {
         console.log(`menu : 
         1. daftar dosen
         2. cari dosen
@@ -179,29 +192,37 @@ class Dosen {
         rl.question('masukkan angka untuk mengakses data dosen', (answer) => {
             switch (answer.trim()) {
                 case '1':
-                    this.daftar()
-                    this.menu()
+                    Dosen.daftar(function(){
+                        Dosen.menu()
+                    })
+                   
                     break;
 
                 case '2':
                     rl.question('masukkan ID dosen', (answer) => {
-                        this.cari(answer.trim())
-                        this.menu()
+                        Dosen.cari(answer.trim(), function(){
+                            Dosen.menu()
+                        })
+                        
                     })
                     break;
 
                 case '3':
                     rl.question('masukkan ID dosen ', (ID) => {
                         rl.question('masukkan nama', (nama) => {
-                            this.tambah(ID.trim(), nama.trim())
-                            this.menu()
+                            Dosen.tambah(ID.trim(), nama.trim(), function(){
+                                Dosen.menu()
+                            })
+                            
                         })
                     })
                     break;
                 case '4':
                     rl.question('masukan ID dosen', (answer) => {
-                        this.ngedelet(answer.trim())
-                        this.menu()
+                        Dosen.ngedelet(answer.trim(), function(){
+                            Dosen.menu()
+                        })
+                        
 
                     })
                     break
@@ -217,37 +238,41 @@ class Dosen {
             }
         })
     }
-    daftar() {
+   static daftar(callback) {
         db.all(`select *  from dosen`, (err, rows) => {
             if (err) return 'gagal mas '
             rows.forEach(row => { console.log(row) })
+            callback()
         })
         
     }
-    cari(answer) {
+    static cari(answer, callback) {
         db.all(`select * from dosen WHERE ID_dosen= "${answer}"`,
             (err, rows) => {
                 if (err) return 'gagal mas '
                 rows.forEach(row => { console.log(row) })
+                callback()
             })
         
 
     }
-    tambah(ID, nama) {
+    static tambah(ID, nama, callback) {
         db.run(`INSERT into dosen(ID_dosen,nama_dosen) values("${ID}", "${nama}")`, function (err, row) {
             if (err) {
                 console.log('eror mas ')
             }
             console.log('udah dimasukin ya')
+            callback()
         })
-        db.close()
+        
     }
-    ngedelet(answer) {
+    static ngedelet(answer, callback) {
         db.run(`DELETE from dosen Where ID_dosen= "${answer}"`, function (err) {
             if (err) {
                 console.log('eror mas ')
             }
             console.log(`sudah di delet mas dengan ID_dosen ${answer}`)
+            callback()
         })
         
 
@@ -256,7 +281,7 @@ class Dosen {
 }
 
 class Matkul {
-    menu() {
+   static menu() {
         console.log(`menu : 
         1. daftar matkul
         2. cari matkul
@@ -266,29 +291,37 @@ class Matkul {
         rl.question('masukkan angka untuk mengakses data matkul', (answer) => {
             switch (answer) {
                 case '1':
-                    this.daftar()
-                    this.menu()
+                    Matkul.daftar(function(){
+                        Matkul.menu()
+                    })
+                
                     break
                 case '2':
                     rl.question('masukkan ID matkul', (answer) => {
-                        this.cari(answer.trim())
-                        this.menu
+                        Matkul.cari(answer.trim(), function(){
+                            Matkul.menu()
+                        })
+                       
                     })
                     break
                 case '3':
                     rl.question('masukkan ID matkul ', (ID) => {
                         rl.question('masukkan nama', (nama) => {
                             rl.question('masukkan jumlah sks', (jumlah) => {
-                                this.tambah(ID.trim(), nama.trim(), jumlah.trim())
-                                this.menu()
+                                Matkul.tambah(ID.trim(), nama.trim(), jumlah.trim(), function(){
+                                    Matkul.menu()
+                                })
+                                t
                             })
                         })
                     })
                     break;
                 case '4':
                     rl.question('masukan ID matkul', (answer) => {
-                        this.ngedelet(answer)
-                        this.menu()
+                        Matkul.ngedelet(answer.trim(), function(){
+                            Matkul.menu()
+                        })
+                        
 
                     })
                     break;
@@ -301,37 +334,41 @@ class Matkul {
             }
         })
     }
-    daftar() {
+    static daftar(callback) {
         db.all(`select * from matkul`, (err, rows) => {
             if (err) return 'gagal mas '
             rows.forEach(row => { console.log(row) })
+            callback()
         })
         
     }
-    cari(answer) {
+    static cari(answer,callback) {
         db.all(`select * from matkul WHERE ID_matkul= "${answer}"`,
             (err, rows) => {
                 if (err) return 'gagal mas '
                 rows.forEach(row => { console.log(row) })
+                callback()
             })
         
 
     }
-    tambah(ID, nama, jumlah) {                                                                                                                       
+    static tambah(ID, nama, jumlah, callback) {                                                                                                                       
         db.run(`INSERT into matkul(ID_matkul,nama_matkul, jumlah_sks) values("${ID}", "${nama}", ${jumlah})`, function (err, row) {
             if (err) {
                 console.log('eror mas ')
             }
             console.log('udah dimasukin ya')
+            callback()
         })
         
     }
-    ngedelet(answer) {
+   static ngedelet(answer,callback) {
         db.run(`DELETE from matkul from matkul Where ID_matkul= "${answer}"`, function (err) {
             if (err) {
                 console.log('eror mas ')
             }
             console.log(`sudah di delet mas dengan ID matkul ${answer}`)
+            callback()
         })
         
 
@@ -339,7 +376,7 @@ class Matkul {
     kembali() { }
 }
 class Jurusan {
-    menu() {
+   static menu() {
         console.log(`menu : 
         1. daftar jurusan 
         2. cari jurusan
@@ -349,28 +386,36 @@ class Jurusan {
         rl.question('masukkan angka untuk mengakses data jurusan', (answer) => {
             switch (answer.trim()) {
                 case '1':
-                    this.daftar()
-                    this.menu()
+                    Jurusan.daftar(function(){
+                        Jurusan.menu()
+                    })
+                   
                     break;
 
                 case '2':
                     rl.question('masukkan ID_jurusannya nya mas', (answer) => {
-                        this.cari(answer.trim())
-                        this.menu()
+                        Jurusan.cari(answer.trim(),function(){
+                            Jurusan.menu()
+                        })
+                    
                     })
                     break;
                 case '3':
                     rl.question('masukkan ID_jurusan ', (id) => {
                         rl.question('masukkan nama jurusan', (nama) => {
-                            this.tambah(id.trim(), nama.trim())
-                            this.menu()
+                            Jurusan.tambah(id.trim(), nama.trim(), function(){
+                                Jurusan.menu()
+                            })
+                            
                         })
                     })
                     break
                 case '4':
                     rl.question('masukan id_jurusan', (answer) => {
-                        this.ngedelet(answer.trim())
-                        this.menu()
+                        Jurusan.ngedelet(answer.trim(),function(){
+                            Jurusan.menu()
+                        })
+                       
 
                     })
                     break
@@ -384,37 +429,41 @@ class Jurusan {
             }
         })
     }
-    daftar() {
+    static daftar(callback) {
         db.all(`select * from jurusan`, (err, rows) => {
             if (err) return 'gagal mas '
             rows.forEach(row => { console.log(row) })
+            callback()
         })
         
     }
-    cari(answer) {
+    static cari(answer, callback) {
         db.all(`select * from jurusan WHERE ID_jurusan = "${answer}"`,
             (err, rows) => {
                 if (err) return 'gagal mas '
                 rows.forEach(row => { console.log(row) })
+                callback()
             })
         
 
     }
-    tambah(id, nama) {
-        db.run(`INSERT into jurusan(ID_jurusan, nama_jurusan) values("${ID}", "${nama}")`, function (err, row) {
+   static  tambah(id, nama, callback) {
+        db.run(`INSERT into jurusan(ID_jurusan, nama_jurusan) values("${id}", "${nama}")`, function (err, row) {
             if (err) {
                 console.log('eror mas ')
             }
             console.log('udah dimasukin ya')
+            callback()
         })
-        db.close()
+        
     }
-    ngedelet(answer) {
+    static ngedelet(answer,callback) {
         db.run(`DELETE from jurusan Where ID_jurusan= "${answer}"`, function (err) {
             if (err) {
                 console.log('eror mas ')
             }
             console.log(`sudah di delet mas dengan id jurusan=${answer}`)
+            callback()
         })
         
 
@@ -422,7 +471,7 @@ class Jurusan {
     kembali() { }
 }
 class Kontrak {
-    menu() {
+    static menu() {
         console.log(`menu : 
         1. daftar kontrak 
         2. cari kontrak
@@ -432,13 +481,17 @@ class Kontrak {
         rl.question('masukkan angka untuk mengakses data kotrak', (answer) => {
             switch (answer) {
                 case '1':
-                    this.daftar()
-                    this.menu
+                    Kontrak.daftar(function(){
+                        Kontrak.menu
+                    })
+                    
                     break;
                 case '2':
                     rl.question('masukkan ID mahasiswa', (answer) => {
-                        this.cari(answer.trim())
-                        this.menu()
+                        Kontrak.cari(answer.trim(), function(){
+                            Kontrak.menu
+                        })
+                        
                     })
                     break;
                 case '3':
@@ -446,8 +499,10 @@ class Kontrak {
                         rl.question('masukkan ID dosen', (IDD) => {
                             rl.question('masukkan nim', (NIM) => {
                                 rl.question('masukkan nilai mahasiswa', (nilai) => {
-                                    this.tambah(IDMT.trim(), IDD.trim(), NIM.trim(), nilai.trim())
-                                    this.menu()
+                                    Kontrak.tambah(IDMT.trim(), IDD.trim(), NIM.trim(), nilai.trim(), function(){
+                                        Kontrak.menu
+                                    })
+                                    
                                 })
                             })
                         })
@@ -455,8 +510,10 @@ class Kontrak {
                     break;
                 case '4':
                     rl.question('masukkan NIM mahasiswa', (answer) => {
-                        this.ngedelet(answer)
-                        this.menu
+                        Kontrak.ngedelet(answer, function(){
+                            Kontrak.menu
+                        })
+                        
                     })
                     break
                 case '5':
@@ -470,37 +527,41 @@ class Kontrak {
             }
         })
     }
-    daftar() {
+     static daftar(callback) {
         db.all(`select * from kontrak_kuliah`, (err, rows) => {
             if (err) return 'gagal mas '
             rows.forEach(row => { console.log(row) })
+            callback()
         })
-        db.close()
+   
     }
-    cari(answer) {
+    static cari(answer,callback) {
         db.all(`select * from kotrak_kuliah WHERE NIM ="${answer}"`,
             (err, rows) => {
                 if (err) return 'gagal mas '
                 rows.forEach(row => { console.log(row) })
+                callback()
             })
         
 
     }
-    tambah(IDMT, IDD, NIM, nilai) {
+    static tambah(IDMT, IDD, NIM, nilai, callback) {
         db.run(`INSERT into kontrak_kuliah(ID_matkul, ID_dosen, NIM, nilai_mahasiswa) values("${IDMT}", ${IDD}, "${NIM}","${nilai}")`, function (err, row) {
             if (err) {
                 console.log('eror mas ')
             }
             console.log('udah dimasukin ya')
+            callback()
         })
         
     }
-    ngedelet(answer) {
+    static ngedelet(answer, callback) {
         db.run(`DELETE from kontrak_kuliah Where NIM = "${answer}"`, function (err) {
             if (err) {
                 console.log('eror mas ')
             }
             console.log(`sudah di delet mas dengan NIM=${answer}`)
+            callback()
         })
     
 
