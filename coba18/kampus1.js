@@ -25,8 +25,7 @@ const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
-var Table = require('cli-table')
-var table = new Table()
+
 class LOgIn {
     constructor(userId, pass) {
         this.userId = userId
@@ -143,7 +142,6 @@ class Mahasiswa {
                         })
 
                     })
-                    this.menu()
                     break
 
                 case '5':
@@ -287,41 +285,70 @@ class Dosen {
     static daftar(callback) {
         db.all(`select *  from dosen`, (err, rows) => {
             if (err) return 'gagal mas '
-            rows.forEach(row => { console.log(row) })
+            rows.forEach(row => {
+                tableDos.push([row.ID_dosen,row.nama_dosen])
+             })
+             console.log(tableDos.toString())
             callback()
         })
 
     }
     static cari(answer, callback) {
+        let cariDos =new Table({
+            head :['ID','Nama dosen'],
+            colWidths :[10,10]
+        })
         db.all(`select * from dosen WHERE ID_dosen= "${answer}"`,
             (err, rows) => {
                 if (err) return 'gagal mas '
-                rows.forEach(row => { console.log(row) })
+                rows.forEach(row => {
+                    cariDos.push([row.ID_dosen, row.nama_dosen])
+                 })
+                 console.log(cariDos.toString())
                 callback()
             })
 
 
     }
     static tambah(ID, nama, callback) {
+        let tambahDos = new Table({
+            head :['ID','Nama dosen'],
+            colWidths:[10,10]
+        })
         db.run(`INSERT into dosen(ID_dosen,nama_dosen) values("${ID}", "${nama}")`, function (err, row) {
-            if (err) {
-                console.log('eror mas ')
-            }
-            console.log('udah dimasukin ya')
-            callback()
+            if (err) return err
+            db.all(`select* from dosen `, (err, rows) => {
+                rows.forEach(row => {
+                    tambahDos.push([row.ID_dosen, row.nama_dosen])
+                })
+                console.log(tambahDos.toString())
+                callback()
+            })
+            
+           
+            
         })
 
     }
     static ngedelet(answer, callback) {
-        
-        db.run(`DELETE from dosen Where ID_dosen= "${answer}"`, function (err) {
-            if (err) {
-                console.log('eror mas ')
-            }
-            
-            callback()
+        let hpsDos = new Table({
+            head : ['ID', 'Nama dosen'],
+            colWidths : [10,10]
         })
-
+        db.all(`select * from  dosen WHERE ID_dosen = "${answer}"`,(err,rows)=>{
+            rows.forEach(row=>{
+                hpsDos.push([row.ID_dosen, row.nama_dosen])
+            })
+            console.log(`ID ${answer} telah dihapus`)
+            console.log(hpsDos.toString())
+            
+        })
+        db.run(`DELETE from dosen Where ID_dosen = "${answer}"`, function (err) {
+            if (err) return err
+           
+            callback()
+           
+        })
 
     }
     kembali() { }
@@ -358,7 +385,7 @@ class Matkul {
                                 Matkul.tambah(ID.trim(), nama.trim(), jumlah.trim(), function () {
                                     Matkul.menu()
                                 })
-                                t
+                                
                             })
                         })
                     })
@@ -384,38 +411,70 @@ class Matkul {
     static daftar(callback) {
         db.all(`select * from matkul`, (err, rows) => {
             if (err) return 'gagal mas '
-            rows.forEach(row => { console.log(row) })
+            rows.forEach(row => { 
+                tableMat.push([row.ID_matkul, row.nama_matkul, row.jumlah_sks])
+             })
+             console.log(tableMat.toString())
             callback()
         })
 
     }
     static cari(answer, callback) {
+        let cariMat= new Table({
+            head : ['ID matkul', 'nama matkul', 'jumlah sks'],
+            colWidths:[10,10,10]
+        })
         db.all(`select * from matkul WHERE ID_matkul= "${answer}"`,
             (err, rows) => {
                 if (err) return 'gagal mas '
-                rows.forEach(row => { console.log(row) })
+                rows.forEach(row => {
+                    cariMat.push([row.ID_matkul, row.nama_matkul, row.jumlah_sks])
+                 })
+                 console.log(cariMat.toString())
                 callback()
             })
 
 
     }
     static tambah(ID, nama, jumlah, callback) {
+        let tambahMat = new Table({
+            head : ['ID matkul', 'nama matkul', 'jumlah sks'], 
+            colWidths : [10,10,10]
+        })
         db.run(`INSERT into matkul(ID_matkul,nama_matkul, jumlah_sks) values("${ID}", "${nama}", ${jumlah})`, function (err, row) {
             if (err) {
                 console.log('eror mas ')
             }
-            console.log('udah dimasukin ya')
-            callback()
+            db.all(`select * from matkul`, (err,rows)=>{
+                rows.forEach(row=>{
+                    tambahMat.push([row.ID_matkul, row.nama_matkul, row.jumlah_sks])
+                })
+                console.log(tambahMat.toString())
+                callback()
+            })
+            
+            
         })
 
     }
     static ngedelet(answer, callback) {
-        db.run(`DELETE from matkul from matkul Where ID_matkul= "${answer}"`, function (err) {
-            if (err) {
-                console.log('eror mas ')
-            }
-            console.log(`sudah di delet mas dengan ID matkul ${answer}`)
+        let hpsMat = new Table({
+            head : ['ID', 'nama Matkul', 'jumlah sks'],
+            colWidths:[10,10,10]
+        })
+        db.all(`select * from matkul WHERE ID_matkul = "${answer}"`,(err,rows)=>{
+            rows.forEach(row=>{
+                hpsMat.push([row.ID_matkul, row.nama_matkul, row.jumlah_sks])
+            })
+            console.log(`ID ${answer} telah dihapus`)
+            console.log(hpsMat.toString())
+            
+        })
+        db.run(`DELETE from matkul Where ID_matkul= "${answer}"`, function (err) {
+            if (err) return err
+           
             callback()
+           
         })
 
 
@@ -479,38 +538,66 @@ class Jurusan {
     static daftar(callback) {
         db.all(`select * from jurusan`, (err, rows) => {
             if (err) return 'gagal mas '
-            rows.forEach(row => { console.log(row) })
+            rows.forEach(row => {
+                tableJur.push([row.ID_jurusan,row.nama_jurusan])
+            })
+            console.log(tableJur.toString())
             callback()
         })
 
     }
     static cari(answer, callback) {
+        let cariJur =new Table({
+            head :['ID','Nama Jurusan'],
+            colWidths :[10,10]
+        })
         db.all(`select * from jurusan WHERE ID_jurusan = "${answer}"`,
             (err, rows) => {
                 if (err) return 'gagal mas '
-                rows.forEach(row => { console.log(row) })
+               rows.forEach(row=>{
+                cariJur.push([row.ID_jurusan, row.nama_jurusan])
+               })
+                 console.log(cariJur.toString())
                 callback()
             })
 
 
     }
     static tambah(id, nama, callback) {
+        let tambahjur = new Table({
+            head :['ID','Nama jurusan'],
+            colWidths:[10,10]
+        })
         db.run(`INSERT into jurusan(ID_jurusan, nama_jurusan) values("${id}", "${nama}")`, function (err, row) {
-            if (err) {
-                console.log('eror mas ')
-            }
-            console.log('udah dimasukin ya')
-            callback()
+            if (err) return err
+            db.all(`select* from jurusan `, (err, rows) => {
+                rows.forEach(row => {
+                    tambahjur.push([row.ID_jurusan, row.nama_jurusan])
+                })
+                console.log(tambahjur.toString())
+                callback()
+            })
         })
 
     }
     static ngedelet(answer, callback) {
-        db.run(`DELETE from jurusan Where ID_jurusan= "${answer}"`, function (err) {
-            if (err) {
-                console.log('eror mas ')
-            }
-            console.log(`sudah di delet mas dengan id jurusan=${answer}`)
+        let hpsJur = new Table({
+            head : ['ID', 'Nama jurusan'],
+            colWidths : [10,10]
+        })
+        db.all(`select * from  jurusan WHERE ID_jurusan = "${answer}"`,(err,rows)=>{
+            rows.forEach(row=>{
+                hpsJur.push([row.ID_jurusan, row.nama_jurusan])
+            })
+            console.log(`ID ${answer} telah dihapus`)
+            console.log(hpsJur.toString())
+            
+        })
+        db.run(`DELETE from jurusan Where ID_jurusan = "${answer}"`, function (err) {
+            if (err) return err
+           
             callback()
+           
         })
 
 
@@ -529,14 +616,14 @@ class Kontrak {
             switch (answer) {
                 case '1':
                     Kontrak.daftar(function () {
-                        Kontrak.menu
+                        Kontrak.menu()
                     })
 
                     break;
                 case '2':
                     rl.question('masukkan ID mahasiswa', (answer) => {
                         Kontrak.cari(answer.trim(), function () {
-                            Kontrak.menu
+                            Kontrak.menu()
                         })
 
                     })
@@ -547,7 +634,7 @@ class Kontrak {
                             rl.question('masukkan nim', (NIM) => {
                                 rl.question('masukkan nilai mahasiswa', (nilai) => {
                                     Kontrak.tambah(IDMT.trim(), IDD.trim(), NIM.trim(), nilai.trim(), function () {
-                                        Kontrak.menu
+                                        Kontrak.menu()
                                     })
 
                                 })
@@ -558,7 +645,7 @@ class Kontrak {
                 case '4':
                     rl.question('masukkan NIM mahasiswa', (answer) => {
                         Kontrak.ngedelet(answer, function () {
-                            Kontrak.menu
+                            Kontrak.menu()
                         })
 
                     })
@@ -575,30 +662,54 @@ class Kontrak {
         })
     }
     static daftar(callback) {
+        let daftarKo = new Table({
+            head:['no', 'ID matkul', 'ID dosen','NIM','nilai'],
+            colWidths:[10,10,10,10,10]
+        })
         db.all(`select * from kontrak_kuliah`, (err, rows) => {
             if (err) return 'gagal mas '
-            rows.forEach(row => { console.log(row) })
+            rows.forEach(row => {
+                daftarKo.push([row.angka, row.ID_matkul, row.ID_dosen, row.NIM, row.nilai_mahasiswa])
+            })
+            console.log(daftarKo.toString())
             callback()
         })
 
     }
     static cari(answer, callback) {
-        db.all(`select * from kotrak_kuliah WHERE NIM ="${answer}"`,
-            (err, rows) => {
-                if (err) return 'gagal mas '
-                rows.forEach(row => { console.log(row) })
-                callback()
+        let daftarKo = new Table({
+            head:['no', 'ID matkul', 'ID dosen','NIM','nilai'],
+            colWidths:[10,10,10,10,10]
+        })
+        db.all(`select * from kontrak_kuliah WHERE NIM = ${answer}`, (err, rows) => {
+            if (err) return 'gagal mas '
+            rows.forEach(row => { console.log(row)
+                // daftarKo.push([row.angka, row.ID_matkul, row.ID_dosen, row.NIM, row.nilai_mahasiswa])
             })
+            // console.log(daftarKo.toString())
+            callback()
+        })
 
 
     }
     static tambah(IDMT, IDD, NIM, nilai, callback) {
+        let tambahKo = new Table({
+            head:['no', 'ID matkul', 'ID dosen','NIM','nilai'],
+            colWidths:[10,10,10,10,10]
+        })
         db.run(`INSERT into kontrak_kuliah(ID_matkul, ID_dosen, NIM, nilai_mahasiswa) values("${IDMT}", ${IDD}, "${NIM}","${nilai}")`, function (err, row) {
             if (err) {
                 console.log('eror mas ')
             }
-            console.log('udah dimasukin ya')
-            callback()
+            console.log('berhasil')
+            db.all(`select * from kontrak_kuliah`, (err, rows) => {
+                if (err) return 'gagal mas '
+                rows.forEach(row => {
+                    tambahKo.push([row.angka, row.ID_matkul, row.ID_dosen, row.NIM, row.nilai_mahasiswa])
+                })
+                console.log(daftarKo.toString())
+                callback()
+            })
         })
 
     }
