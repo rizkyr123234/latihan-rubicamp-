@@ -19,3 +19,8 @@ db.all(`select NIM, nama, ID_jurusan from mahasiswa`, (err, rows) => {
 // table is an Array, so you can `push`, `unshift`, `splice` and friends
 
 
+const readline = require('readline');
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
